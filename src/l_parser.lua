@@ -222,7 +222,11 @@ end
 
 -------------------------------------------
 
-local callback = nil
+local _callback = {
+    __index = function()
+        return function() return nil end
+    end
+}
 
 -- TODO
 -- add callback
@@ -307,8 +311,9 @@ end
 local l_parser = {}
 
 -- parser
-function l_parser:parse(filename, _callback)
-    callback = _callback
+function l_parser:parse(filename, callback)
+    callback = callback or {}
+    setmetatable(callback, _callback)
     local f = open(filename, 'rb')
 
     local magic_string = f:read(5)
